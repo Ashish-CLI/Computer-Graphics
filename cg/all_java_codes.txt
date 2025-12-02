@@ -1,0 +1,2452 @@
+========================================
+File: TranslationAlgorithm.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class TranslationAlgorithm extends JPanel {
+    private List<Point> originalPoints;
+    private List<Point> translatedPoints;
+    private int tx, ty;
+
+    public TranslationAlgorithm() {
+        originalPoints = new ArrayList<>();
+        translatedPoints = new ArrayList<>();
+        
+        getUserInput();
+        
+        performTranslation();
+    }
+
+    private void getUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter translation distance in x-direction (tx): ");
+        tx = scanner.nextInt();
+        System.out.print("Enter translation distance in y-direction (ty): ");
+        ty = scanner.nextInt();
+        
+        System.out.print("Enter the number of points: ");
+        int n = scanner.nextInt();
+        
+        System.out.println("Enter the coordinates of points:");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Point " + (i + 1) + " x-coordinate: ");
+            int x = scanner.nextInt();
+            System.out.print("Point " + (i + 1) + " y-coordinate: ");
+            int y = scanner.nextInt();
+            originalPoints.add(new Point(x, y));
+        }
+        
+        scanner.close();
+    }
+
+    private void performTranslation() {
+        translatedPoints.clear();
+        for (Point p : originalPoints) {
+            translatedPoints.add(new Point(p.x + tx, p.y + ty));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, translatedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points.size() < 2) return;
+        
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        TranslationAlgorithm algorithm = new TranslationAlgorithm();
+        
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Translation Algorithm");
+            frame.add(algorithm);
+            frame.setSize(800, 600);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+}
+
+========================================
+File: RotationAlgorithm.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class RotationAlgorithm extends JPanel {
+    private List<Point> originalPoints;
+    private List<Point> rotatedPoints;
+    private double angle;
+
+    public RotationAlgorithm() {
+        originalPoints = new ArrayList<>();
+        rotatedPoints = new ArrayList<>();
+        
+        getUserInput();
+        
+        performRotation();
+    }
+
+    private void getUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter rotation angle in degrees: ");
+        angle = Math.toRadians(scanner.nextDouble());
+        
+        System.out.print("Enter the number of points: ");
+        int n = scanner.nextInt();
+        
+        System.out.println("Enter the coordinates of points:");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Point " + (i + 1) + " x-coordinate: ");
+            int x = scanner.nextInt();
+            System.out.print("Point " + (i + 1) + " y-coordinate: ");
+            int y = scanner.nextInt();
+            originalPoints.add(new Point(x, y));
+        }
+        
+        scanner.close();
+    }
+
+    private void performRotation() {
+        rotatedPoints.clear();
+        for (Point p : originalPoints) {
+            double x = p.x * Math.cos(angle) - p.y * Math.sin(angle);
+            double y = p.x * Math.sin(angle) + p.y * Math.cos(angle);
+            rotatedPoints.add(new Point((int) Math.round(x), (int) Math.round(y)));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, rotatedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points.size() < 2) return;
+        
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        RotationAlgorithm algorithm = new RotationAlgorithm();
+        
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Rotation Algorithm");
+            frame.add(algorithm);
+            frame.setSize(800, 600);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+}
+
+========================================
+File: ScalingAlgorithm.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ScalingAlgorithm extends JPanel {
+    private List<Point> originalPoints;
+    private List<Point> scaledPoints;
+    private double sx, sy;
+
+    public ScalingAlgorithm() {
+        originalPoints = new ArrayList<>();
+        scaledPoints = new ArrayList<>();
+        
+        getUserInput();
+        
+        performScaling();
+    }
+
+    private void getUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter scaling factor in x-direction (sx): ");
+        sx = scanner.nextDouble();
+        System.out.print("Enter scaling factor in y-direction (sy): ");
+        sy = scanner.nextDouble();
+        
+        System.out.print("Enter the number of points: ");
+        int n = scanner.nextInt();
+        
+        System.out.println("Enter the coordinates of points:");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Point " + (i + 1) + " x-coordinate: ");
+            int x = scanner.nextInt();
+            System.out.print("Point " + (i + 1) + " y-coordinate: ");
+            int y = scanner.nextInt();
+            originalPoints.add(new Point(x, y));
+        }
+        
+        scanner.close();
+    }
+
+    private void performScaling() {
+        scaledPoints.clear();
+        for (Point p : originalPoints) {
+            double x = p.x * sx;
+            double y = p.y * sy;
+            scaledPoints.add(new Point((int) Math.round(x), (int) Math.round(y)));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, scaledPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points.size() < 2) return;
+        
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        ScalingAlgorithm algorithm = new ScalingAlgorithm();
+        
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Scaling Algorithm");
+            frame.add(algorithm);
+            frame.setSize(800, 600);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+}
+
+========================================
+File: ReflectionX.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ReflectionX extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> reflectedPoints;
+
+    public ReflectionX(List<Point> points) {
+        this.originalPoints = points;
+        this.reflectedPoints = new ArrayList<>();
+        performReflection();
+    }
+
+    private void performReflection() {
+        reflectedPoints.clear();
+        for (Point p : originalPoints) {
+            reflectedPoints.add(new Point(p.x, -p.y));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0);
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, reflectedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Reflection About X-Axis");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ReflectionX(shapePoints));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: ReflectionY.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ReflectionY extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> reflectedPoints;
+
+    public ReflectionY(List<Point> points) {
+        this.originalPoints = points;
+        this.reflectedPoints = new ArrayList<>();
+        performReflection();
+    }
+
+    private void performReflection() {
+        reflectedPoints.clear();
+        for (Point p : originalPoints) {
+            reflectedPoints.add(new Point(-p.x, p.y));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0);
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, reflectedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Reflection About Y-Axis");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ReflectionY(shapePoints));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: ReflectionYNegX.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ReflectionYNegX extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> reflectedPoints;
+
+    public ReflectionYNegX(List<Point> points) {
+        this.originalPoints = points;
+        this.reflectedPoints = new ArrayList<>();
+        performReflection();
+    }
+
+    private void performReflection() {
+        reflectedPoints.clear();
+        for (Point p : originalPoints) {
+            reflectedPoints.add(new Point(-p.y, -p.x));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Draw X and Y axes and the line y=-x
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0); // X-axis
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2); // Y-axis
+        g2d.drawLine(-getWidth() / 2, getWidth()/2, getHeight() / 2, -getHeight()/2); // y=-x line
+
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, reflectedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Reflection About Y=-X Axis");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ReflectionYNegX(shapePoints));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: ReflectionYX.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ReflectionYX extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> reflectedPoints;
+
+    public ReflectionYX(List<Point> points) {
+        this.originalPoints = points;
+        this.reflectedPoints = new ArrayList<>();
+        performReflection();
+    }
+
+    private void performReflection() {
+        reflectedPoints.clear();
+        for (Point p : originalPoints) {
+            reflectedPoints.add(new Point(p.y, p.x));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0);
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2);
+        g2d.drawLine(-getWidth() / 2, -getWidth()/2, getHeight() / 2, getHeight()/2);
+
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, reflectedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Reflection About Y=X Axis");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ReflectionYX(shapePoints));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: ShearX.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ShearX extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> shearedPoints;
+    private final double shx;
+
+    public ShearX(List<Point> points, double shx) {
+        this.originalPoints = points;
+        this.shearedPoints = new ArrayList<>();
+        this.shx = shx;
+        performShear();
+    }
+
+    private void performShear() {
+        shearedPoints.clear();
+        for (Point p : originalPoints) {
+            int newX = (int) Math.round(p.x + shx * p.y);
+            shearedPoints.add(new Point(newX, p.y));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0); // X-axis
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2); // Y-axis
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, shearedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the shear factor for the x-direction (shx): ");
+            double shx = scanner.nextDouble();
+
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Shear in X-Direction");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ShearX(shapePoints, shx));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: ShearY.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ShearY extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> shearedPoints;
+    private final double shy;
+
+    public ShearY(List<Point> points, double shy) {
+        this.originalPoints = points;
+        this.shearedPoints = new ArrayList<>();
+        this.shy = shy;
+        performShear();
+    }
+
+    private void performShear() {
+        shearedPoints.clear();
+        for (Point p : originalPoints) {
+            int newY = (int) Math.round(p.y + shy * p.x);
+            shearedPoints.add(new Point(p.x, newY));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0); // X-axis
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2); // Y-axis
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, shearedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the shear factor for the y-direction (shy): ");
+            double shy = scanner.nextDouble();
+
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Shear in Y-Direction");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ShearY(shapePoints, shy));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: ShearXY.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ShearXY extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> shearedPoints;
+    private final double shx;
+    private final double shy;
+
+    public ShearXY(List<Point> points, double shx, double shy) {
+        this.originalPoints = points;
+        this.shearedPoints = new ArrayList<>();
+        this.shx = shx;
+        this.shy = shy;
+        performShear();
+    }
+
+    private void performShear() {
+        shearedPoints.clear();
+        for (Point p : originalPoints) {
+            int newX = (int) Math.round(p.x + shx * p.y);
+            int newY = (int) Math.round(p.y + shy * p.x);
+            shearedPoints.add(new Point(newX, newY));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0); // X-axis
+        g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2); // Y-axis
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, shearedPoints);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter the shear factor for the x-direction (shx): ");
+            double shx = scanner.nextDouble();
+            System.out.print("Enter the shear factor for the y-direction (shy): ");
+            double shy = scanner.nextDouble();
+
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Shear in X and Y Directions");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new ShearXY(shapePoints, shx, shy));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: CohenSutherland.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.util.Scanner;
+
+public class CohenSutherland extends JPanel {
+
+    // Region codes
+    static final int INSIDE = 0; // 0000
+    static final int LEFT = 1;   // 0001
+    static final int RIGHT = 2;  // 0010
+    static final int BOTTOM = 4; // 0100
+    static final int TOP = 8;    // 1000
+
+    private final int xMin, yMin, xMax, yMax;
+    private int x0, y0, x1, y1;
+    private final int originalX0, originalY0, originalX1, originalY1;
+    private boolean clipped;
+
+    public CohenSutherland(int xMin, int yMin, int xMax, int yMax, int x0, int y0, int x1, int y1) {
+        this.xMin = xMin;
+        this.yMin = yMin;
+        this.xMax = xMax;
+        this.yMax = yMax;
+        this.originalX0 = this.x0 = x0;
+        this.originalY0 = this.y0 = y0;
+        this.originalX1 = this.x1 = x1;
+        this.originalY1 = this.y1 = y1;
+        this.clipped = false;
+        cohenSutherlandClip();
+    }
+
+    private int computeCode(double x, double y) {
+        int code = INSIDE;
+        if (x < xMin)
+            code |= LEFT;
+        else if (x > xMax)
+            code |= RIGHT;
+        if (y < yMin)
+            code |= BOTTOM;
+        else if (y > yMax)
+            code |= TOP;
+        return code;
+    }
+
+    private void cohenSutherlandClip() {
+        int code0 = computeCode(x0, y0);
+        int code1 = computeCode(x1, y1);
+        boolean accept = false;
+
+        while (true) {
+            if ((code0 == 0) && (code1 == 0)) {
+                accept = true;
+                break;
+            } else if ((code0 & code1) != 0) {
+                break;
+            } else {
+                int codeOut = (code0 != 0) ? code0 : code1;
+                double x = 0, y = 0;
+
+                if ((codeOut & TOP) != 0) {
+                    x = x0 + (x1 - x0) * (yMax - y0) / (y1 - y0);
+                    y = yMax;
+                } else if ((codeOut & BOTTOM) != 0) {
+                    x = x0 + (x1 - x0) * (yMin - y0) / (y1 - y0);
+                    y = yMin;
+                } else if ((codeOut & RIGHT) != 0) {
+                    y = y0 + (y1 - y0) * (xMax - x0) / (x1 - x0);
+                    x = xMax;
+                } else if ((codeOut & LEFT) != 0) {
+                    y = y0 + (y1 - y0) * (xMin - x0) / (x1 - x0);
+                    x = xMin;
+                }
+
+                if (codeOut == code0) {
+                    x0 = (int)x;
+                    y0 = (int)y;
+                    code0 = computeCode(x0, y0);
+                } else {
+                    x1 = (int)x;
+                    y1 = (int)y;
+                    code1 = computeCode(x1, y1);
+                }
+            }
+        }
+        clipped = accept;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+
+        // Draw clipping window
+        g2d.setColor(Color.BLACK);
+        g2d.drawRect(xMin, yMin, xMax - xMin, yMax - yMin);
+
+        // Draw original line
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawLine(originalX0, originalY0, originalX1, originalY1);
+
+        // Draw clipped line if it's visible
+        if (clipped) {
+            g2d.setColor(Color.RED);
+            g2d.drawLine(x0, y0, x1, y1);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.println("Enter clipping window coordinates:");
+            System.out.print("xMin: ");
+            int xMin = scanner.nextInt();
+            System.out.print("yMin: ");
+            int yMin = scanner.nextInt();
+            System.out.print("xMax: ");
+            int xMax = scanner.nextInt();
+            System.out.print("yMax: ");
+            int yMax = scanner.nextInt();
+
+            System.out.println("Enter line endpoints:");
+            System.out.print("x0: ");
+            int x0 = scanner.nextInt();
+            System.out.print("y0: ");
+            int y0 = scanner.nextInt();
+            System.out.print("x1: ");
+            int x1 = scanner.nextInt();
+            System.out.print("y1: ");
+            int y1 = scanner.nextInt();
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Cohen-Sutherland Line Clipping");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new CohenSutherland(xMin, yMin, xMax, yMax, x0, y0, x1, y1));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid integers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: PivotRotation.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class PivotRotation extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> rotatedPoints;
+    private double angleDegrees;
+    private final Point pivotPoint;
+
+    public PivotRotation(List<Point> points, Point pivot, double angle) {
+        this.originalPoints = points;
+        this.pivotPoint = pivot;
+        this.angleDegrees = angle;
+        this.rotatedPoints = new ArrayList<>();
+        performRotation();
+    }
+
+    private void performRotation() {
+        rotatedPoints.clear();
+        double angleRadians = Math.toRadians(angleDegrees);
+        double cosAngle = Math.cos(angleRadians);
+        double sinAngle = Math.sin(angleRadians);
+
+        for (Point p : originalPoints) {
+            double translatedX = p.x - pivotPoint.x;
+            double translatedY = p.y - pivotPoint.y;
+
+            double rotatedX = translatedX * cosAngle - translatedY * sinAngle;
+            double rotatedY = translatedX * sinAngle + translatedY * cosAngle;
+
+            double finalX = rotatedX + pivotPoint.x;
+            double finalY = rotatedY + pivotPoint.y;
+
+            rotatedPoints.add(new Point((int) Math.round(finalX), (int) Math.round(finalY)));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, rotatedPoints);
+
+        g2d.setColor(Color.GREEN);
+        g2d.fillOval(pivotPoint.x - 5, pivotPoint.y - 5, 10, 10);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter Pivot X coordinate: ");
+            int pivotX = scanner.nextInt();
+            System.out.print("Enter Pivot Y coordinate: ");
+            int pivotY = scanner.nextInt();
+            Point pivot = new Point(pivotX, pivotY);
+
+            System.out.print("Enter rotation angle in degrees: ");
+            double angle = scanner.nextDouble();
+
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Rotation About a Pivot Point");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new PivotRotation(shapePoints, pivot, angle));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: FixedPointScaling.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class FixedPointScaling extends JPanel {
+    private final List<Point> originalPoints;
+    private final List<Point> scaledPoints;
+    private final double sx;
+    private final double sy;
+    private final Point fixedPoint;
+
+    public FixedPointScaling(List<Point> points, Point fixedPt, double sx, double sy) {
+        this.originalPoints = points;
+        this.fixedPoint = fixedPt;
+        this.sx = sx;
+        this.sy = sy;
+        this.scaledPoints = new ArrayList<>();
+        performScaling();
+    }
+
+    private void performScaling() {
+        scaledPoints.clear();
+        for (Point p : originalPoints) {
+            double translatedX = p.x - fixedPoint.x;
+            double translatedY = p.y - fixedPoint.y;
+
+            double scaledX = translatedX * sx;
+            double scaledY = translatedY * sy;
+
+            double finalX = scaledX + fixedPoint.x;
+            double finalY = scaledY + fixedPoint.y;
+
+            scaledPoints.add(new Point((int) Math.round(finalX), (int) Math.round(finalY)));
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.BLUE);
+        drawShape(g2d, originalPoints);
+
+        g2d.setColor(Color.RED);
+        drawShape(g2d, scaledPoints);
+
+        g2d.setColor(Color.GREEN);
+        g2d.fillOval(fixedPoint.x - 5, fixedPoint.y - 5, 10, 10);
+    }
+
+    private void drawShape(Graphics2D g2d, List<Point> points) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        Path2D path = new Path2D.Double();
+        Point firstPoint = points.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+        for (int i = 1; i < points.size(); i++) {
+            Point p = points.get(i);
+            path.lineTo(p.x, p.y);
+        }
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter Fixed Point X coordinate: ");
+            int fixedX = scanner.nextInt();
+            System.out.print("Enter Fixed Point Y coordinate: ");
+            int fixedY = scanner.nextInt();
+            Point fixedPoint = new Point(fixedX, fixedY);
+
+            System.out.print("Enter scaling factor in x-direction (sx): ");
+            double sx = scanner.nextDouble();
+            System.out.print("Enter scaling factor in y-direction (sy): ");
+            double sy = scanner.nextDouble();
+
+            System.out.print("Enter the number of points for the shape: ");
+            int numPoints = scanner.nextInt();
+
+            List<Point> shapePoints = new ArrayList<>();
+            for (int i = 0; i < numPoints; i++) {
+                System.out.print("Enter x-coordinate for point " + (i + 1) + ": ");
+                int x = scanner.nextInt();
+                System.out.print("Enter y-coordinate for point " + (i + 1) + ": ");
+                int y = scanner.nextInt();
+                shapePoints.add(new Point(x, y));
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Scaling About a Fixed Point");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new FixedPointScaling(shapePoints, fixedPoint, sx, sy));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid numbers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: MidpointCircleClipping.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class MidpointCircleClipping extends JPanel {
+    private final int xMin, yMin, xMax, yMax;
+    private final int centerX, centerY, radius;
+    private final List<Point> circlePoints;
+    private final List<Point> clippedPoints;
+
+    public MidpointCircleClipping(int xMin, int yMin, int xMax, int yMax, int centerX, int centerY, int radius) {
+        this.xMin = xMin;
+        this.yMin = yMin;
+        this.xMax = xMax;
+        this.yMax = yMax;
+        this.centerX = centerX;
+        this.centerY = centerY;
+        this.radius = radius;
+        this.circlePoints = new ArrayList<>();
+        this.clippedPoints = new ArrayList<>();
+        generateCirclePoints();
+        clipCircle();
+    }
+
+    private void generateCirclePoints() {
+        int x = 0;
+        int y = radius;
+        int p = 1 - radius;
+
+        plotPoints(x, y);
+
+        while (x < y) {
+            x++;
+            if (p < 0) {
+                p += 2 * x + 1;
+            } else {
+                y--;
+                p += 2 * (x - y) + 1;
+            }
+            plotPoints(x, y);
+        }
+    }
+
+    private void plotPoints(int x, int y) {
+        circlePoints.add(new Point(centerX + x, centerY + y));
+        circlePoints.add(new Point(centerX - x, centerY + y));
+        circlePoints.add(new Point(centerX + x, centerY - y));
+        circlePoints.add(new Point(centerX - x, centerY - y));
+        circlePoints.add(new Point(centerX + y, centerY + x));
+        circlePoints.add(new Point(centerX - y, centerY + x));
+        circlePoints.add(new Point(centerX + y, centerY - x));
+        circlePoints.add(new Point(centerX - y, centerY - x));
+    }
+
+    private void clipCircle() {
+        for (Point p : circlePoints) {
+            if (p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax) {
+                clippedPoints.add(p);
+            }
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.translate(getWidth() / 2, getHeight() / 2);
+
+        // Draw clipping window
+        g2d.setColor(Color.BLACK);
+        g2d.drawRect(xMin, yMin, xMax - xMin, yMax - yMin);
+
+        // Draw original circle points
+        g2d.setColor(Color.LIGHT_GRAY);
+        for (Point p : circlePoints) {
+            g2d.drawLine(p.x, p.y, p.x, p.y);
+        }
+
+        // Draw clipped circle points
+        g2d.setColor(Color.RED);
+        for (Point p : clippedPoints) {
+            g2d.drawLine(p.x, p.y, p.x, p.y);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.println("Enter clipping window coordinates:");
+            System.out.print("xMin: ");
+            int xMin = scanner.nextInt();
+            System.out.print("yMin: ");
+            int yMin = scanner.nextInt();
+            System.out.print("xMax: ");
+            int xMax = scanner.nextInt();
+            System.out.print("yMax: ");
+            int yMax = scanner.nextInt();
+
+            System.out.println("Enter circle parameters:");
+            System.out.print("Center X: ");
+            int centerX = scanner.nextInt();
+            System.out.print("Center Y: ");
+            int centerY = scanner.nextInt();
+            System.out.print("Radius: ");
+            int radius = scanner.nextInt();
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("Midpoint Circle Clipping");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new MidpointCircleClipping(xMin, yMin, xMax, yMax, centerX, centerY, radius));
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter valid integers.");
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+========================================
+File: LiangBarskyClipping.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.List;
+
+public class LiangBarskyClipping extends JFrame {
+
+    private static final int X_MIN = 100;
+    private static final int Y_MIN = 100;
+    private static final int X_MAX = 500;
+    private static final int Y_MAX = 400;
+
+    public LiangBarskyClipping() {
+        setTitle("Liang-Barsky Line Clipping Algorithm");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ClippingPanel panel = new ClippingPanel();
+        add(panel);
+        setSize(700, 600);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    private record Line(double x1, double y1, double x2, double y2) {
+    }
+
+    private class ClippingPanel extends JPanel {
+
+        private final List<Line> testLines;
+
+        public ClippingPanel() {
+            setBackground(Color.WHITE);
+            testLines = new ArrayList<>();
+            testLines.add(new Line(150, 150, 450, 350));
+            testLines.add(new Line(50, 50, 80, 80));
+            testLines.add(new Line(50, 300, 550, 500));
+            testLines.add(new Line(50, 150, 550, 250));
+            testLines.add(new Line(450, 50, 600, 450));
+            testLines.add(new Line(50, 50, 600, 50));
+            testLines.add(new Line(200, 50, 200, 450));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+
+            g2d.setColor(Color.BLUE);
+            g2d.setStroke(new BasicStroke(3));
+            g2d.drawRect(X_MIN, Y_MIN, X_MAX - X_MIN, Y_MAX - Y_MIN);
+            g2d.setFont(new Font("Arial", Font.BOLD, 14));
+            g2d.drawString("Clipping Window", X_MIN + 5, Y_MIN - 10);
+            
+            for (Line line : testLines) {
+                g2d.setColor(new Color(150, 150, 150, 100));
+                g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5, 5}, 0));
+                g2d.draw(new Line2D.Double(line.x1, line.y1, line.x2, line.y2));
+
+                Line clipped = liangBarskyClip(line);
+
+                if (clipped != null) {
+                    g2d.setColor(Color.RED);
+                    g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    g2d.draw(new Line2D.Double(clipped.x1, clipped.y1, clipped.x2, clipped.y2));
+                }
+            }
+            
+            g2d.setColor(Color.BLACK);
+            g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+            g2d.setStroke(new BasicStroke(1));
+            g2d.drawString("LEGEND:", 550, 50);
+            
+            g2d.setColor(Color.BLUE);
+            g2d.setStroke(new BasicStroke(3));
+            g2d.drawRect(550, 60, 20, 20);
+            g2d.drawString("Clipping Window", 580, 75);
+            
+            g2d.setColor(new Color(150, 150, 150));
+            g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5, 5}, 0));
+            g2d.draw(new Line2D.Double(550, 100, 570, 100));
+            g2d.drawString("Original Line (Unclipped)", 580, 105);
+
+            g2d.setColor(Color.RED);
+            g2d.setStroke(new BasicStroke(4));
+            g2d.draw(new Line2D.Double(550, 130, 570, 130));
+            g2d.drawString("Clipped Segment", 580, 135);
+        }
+
+        private Line liangBarskyClip(Line line) {
+            double dx = line.x2 - line.x1;
+            double dy = line.y2 - line.y1;
+
+            double u1 = 0.0;
+            double u2 = 1.0;
+
+            double[] p = {-dx, dx, -dy, dy};
+            double[] q = {line.x1 - X_MIN, X_MAX - line.x1, line.y1 - Y_MIN, Y_MAX - line.y1};
+
+            for (int k = 0; k < 4; k++) {
+                if (p[k] == 0) {
+                    if (q[k] < 0) {
+                        return null;
+                    }
+                } else {
+                    double r = q[k] / p[k];
+                    
+                    if (p[k] < 0) {
+                        u1 = Math.max(u1, r);
+                    } else {
+                        u2 = Math.min(u2, r);
+                    }
+                }
+            }
+
+            if (u1 > u2) {
+                return null;
+            }
+
+            double x_clipped_start = line.x1 + u1 * dx;
+            double y_clipped_start = line.y1 + u1 * dy;
+            double x_clipped_end = line.x1 + u2 * dx;
+            double y_clipped_end = line.y1 + u2 * dy;
+
+            return new Line(x_clipped_start, y_clipped_start, x_clipped_end, y_clipped_end);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(LiangBarskyClipping::new);
+    }
+}
+
+========================================
+File: SutherlandHodgmanClipping.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class SutherlandHodgmanClipping extends JFrame {
+
+    private static final double X_MIN = 100;
+    private static final double Y_MIN = 100;
+    private static final double X_MAX = 500;
+    private static final double Y_MAX = 400;
+
+    public SutherlandHodgmanClipping() {
+        setTitle("Sutherland-Hodgman Polygon Clipping");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ClippingPanel panel = new ClippingPanel();
+        add(panel);
+        setSize(700, 600);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    private record Point(double x, double y) {
+    }
+
+    private class ClippingPanel extends JPanel {
+
+        private final List<Point> initialPolygon;
+        private List<Point> clippedPolygon;
+
+        public ClippingPanel() {
+            setBackground(Color.WHITE);
+            initialPolygon = Arrays.asList(
+                new Point(50, 200),
+                new Point(300, 50),
+                new Point(550, 200),
+                new Point(450, 450),
+                new Point(150, 450)
+            );
+
+            clippedPolygon = clip(initialPolygon);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2d.setColor(Color.BLUE);
+            g2d.setStroke(new BasicStroke(3));
+            g2d.drawRect((int)X_MIN, (int)Y_MIN, (int)(X_MAX - X_MIN), (int)(Y_MAX - Y_MIN));
+            g2d.setFont(new Font("Arial", Font.BOLD, 14));
+            g2d.drawString("Clipping Window", (int)X_MIN + 5, (int)Y_MIN - 10);
+            
+            g2d.setColor(new Color(150, 150, 150, 100));
+            g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5, 5}, 0));
+            drawPolygon(g2d, initialPolygon, false);
+
+            if (clippedPolygon != null && clippedPolygon.size() >= 3) {
+                g2d.setColor(new Color(30, 144, 255, 120));
+                drawPolygon(g2d, clippedPolygon, true);
+
+                g2d.setColor(new Color(0, 100, 0));
+                g2d.setStroke(new BasicStroke(3));
+                drawPolygon(g2d, clippedPolygon, false);
+            }
+            
+            g2d.setColor(Color.BLACK);
+            g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+            g2d.setStroke(new BasicStroke(1));
+            g2d.drawString("LEGEND:", 550, 50);
+            
+            g2d.setColor(Color.BLUE);
+            g2d.setStroke(new BasicStroke(3));
+            g2d.drawRect(550, 60, 20, 20);
+            g2d.drawString("Clipping Window", 580, 75);
+            
+            g2d.setColor(new Color(150, 150, 150));
+            g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5, 5}, 0));
+            g2d.draw(new java.awt.geom.Line2D.Double(550, 100, 570, 100));
+            g2d.drawString("Original Polygon", 580, 105);
+
+            g2d.setColor(new Color(0, 100, 0));
+            g2d.setStroke(new BasicStroke(3));
+            g2d.draw(new java.awt.geom.Line2D.Double(550, 130, 570, 130));
+            g2d.drawString("Clipped Polygon", 580, 135);
+        }
+
+        private void drawPolygon(Graphics2D g2d, List<Point> points, boolean fill) {
+            if (points.size() < 2) return;
+            
+            Path2D path = new Path2D.Double();
+            path.moveTo(points.get(0).x, points.get(0).y);
+            for (int i = 1; i < points.size(); i++) {
+                path.lineTo(points.get(i).x, points.get(i).y);
+            }
+            path.closePath();
+
+            if (fill) {
+                g2d.fill(path);
+            } else {
+                g2d.draw(path);
+            }
+        }
+
+        private List<Point> clip(List<Point> inputPolygon) {
+            List<Point> outputList = inputPolygon;
+
+            outputList = clipEdge(outputList, X_MIN, Y_MIN, X_MIN, Y_MAX);
+            outputList = clipEdge(outputList, X_MAX, Y_MAX, X_MAX, Y_MIN);
+            outputList = clipEdge(outputList, X_MIN, Y_MAX, X_MAX, Y_MAX);
+            outputList = clipEdge(outputList, X_MAX, Y_MIN, X_MIN, Y_MIN);
+            
+            return outputList;
+        }
+
+        private List<Point> clipEdge(List<Point> inputList, double x1, double y1, double x2, double y2) {
+            List<Point> outputList = new ArrayList<>();
+            if (inputList.isEmpty()) return outputList;
+
+            double edgeDx = x2 - x1;
+            double edgeDy = y2 - y1;
+
+            Point s = inputList.get(inputList.size() - 1);
+
+            for (Point e : inputList) {
+
+                boolean s_inside = isInside(s, x1, y1, edgeDx, edgeDy);
+                boolean e_inside = isInside(e, x1, y1, edgeDx, edgeDy);
+
+                if (s_inside && e_inside) {
+                    outputList.add(e);
+                } 
+                else if (!s_inside && e_inside) {
+                    Point i = computeIntersection(s, e, x1, y1, edgeDx, edgeDy);
+                    outputList.add(i);
+                    outputList.add(e);
+                } 
+                else if (s_inside && !e_inside) {
+                    Point i = computeIntersection(s, e, x1, y1, edgeDx, edgeDy);
+                    outputList.add(i);
+                }
+
+                s = e;
+            }
+
+            return outputList;
+        }
+
+        private boolean isInside(Point p, double x1, double y1, double edgeDx, double edgeDy) {
+            return (edgeDx * (p.y - y1) - edgeDy * (p.x - x1)) >= 0;
+        }
+
+        private Point computeIntersection(Point s, Point e, double x1, double y1, double edgeDx, double edgeDy) {
+            double segDx = e.x - s.x;
+            double segDy = e.y - s.y;
+
+            double denominator = edgeDx * segDy - edgeDy * segDx;
+
+            double t = ((s.x - x1) * edgeDy - (s.y - y1) * edgeDx) / denominator;
+
+            t = Math.max(0.0, Math.min(1.0, t));
+
+            double ix = s.x + t * segDx;
+            double iy = s.y + t * segDy;
+
+            return new Point(ix, iy);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(SutherlandHodgmanClipping::new);
+    }
+}
+
+========================================
+File: DDA.java
+========================================
+public class DDA {
+
+    public void drawLine (int x1,int y1,int x2,int y2){
+        int dx = x2 -x1 ;
+        int dy = y2 -y1;
+    
+        int steps = Math.max(Math.abs(dx), Math.abs(dy));
+        float xincr = (float) dx/steps;
+        float yincr = (float) dy/steps;
+
+        float x = x1;
+        float y = y1;
+
+        System.out.println("line from ( " + x1 +"," + y1 + ") to (" + x2 + "," + y2 + ")" );
+        System.out.println("------------------------------------");
+        for (int i = 0; i <= steps; i++) {
+            int plotX = Math.round(x);
+            int plotY = Math.round(y);
+            System.out.println("(" + plotX + ", " + plotY + ")");
+
+            x += xincr;
+            y += yincr;
+        }
+        System.out.println("------------------------------------");
+    }
+
+    public static void main(String[] args) {
+        DDA d = new DDA();
+        d.drawLine(100, 100, 300,200);
+        d.drawLine(300, 200, 100, 100);
+        d.drawLine(100, 100, 300,100);
+        d.drawLine(100, 100, 100, 300); 
+    }
+    }
+
+========================================
+File: DdaGraphical.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+
+
+class LinePanel extends JPanel {
+    private final int x1, y1, x2, y2;
+
+    public LinePanel(int x1, int y1, int x2, int y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(2));
+
+        drawDdaLine(g);
+    }
+    
+    private void drawDdaLine(Graphics g) {
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+
+        int steps = Math.max(Math.abs(dx), Math.abs(dy));
+
+        float xIncrement = (float) dx / steps;
+        float yIncrement = (float) dy / steps;
+
+        float x = x1;
+        float y = y1;
+
+        for (int i = 0; i <= steps; i++) {
+            int plotX = Math.round(x);
+            int plotY = Math.round(y);
+
+            g.drawLine(plotX, plotY, plotX, plotY);
+
+            x += xIncrement;
+            y += yIncrement;
+        }
+    }
+}
+
+public class DdaGraphical {
+    public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("DDA Line Drawing Algorithm");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(800, 600);
+            
+            frame.add(new LinePanel(100, 100, 100,300));
+            // frame.add(new LinePanel(300, 200, 100, 100));
+            
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+}
+
+========================================
+File: Drawcircle.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+
+public class Drawcircle extends JPanel {
+    protected void  paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Set the color to blue
+        g.setColor(Color.BLUE);
+        
+       int x =100, y = 100, radius = 50;
+        g.drawOval(x-radius, y-radius, 2*radius, 2*radius);
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Draw Circle Example");
+        Drawcircle circlePanel = new Drawcircle();
+        frame.add(circlePanel);
+        frame.setSize(400, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+
+========================================
+File: LineBresem.java
+========================================
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+
+public class LineBresem extends JPanel {
+    private final BufferedImage canvas;
+
+    public LineBresem(int width, int height) {
+        canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = canvas.createGraphics();
+        g2d.setColor(Color.white);
+        g2d.fillRect(0, 0, width, height);
+        g2d.dispose();
+
+        Bresenhem(100, 100, 300, 100, Color.RED);
+    }
+
+    private void putPixel(int x, int y, Color color) {
+        if (x >= 0 && x < canvas.getWidth() && y >= 0 && y < canvas.getHeight()) {
+            canvas.setRGB(x, y, color.getRGB());
+        }
+    }
+
+    private void Bresenhem(int x0, int y0, int x1, int y1, Color color) {
+        boolean inf = false;
+        if (x1 < x0 && y1 < y0) {
+            int temp = x0;
+            x0 = x1;
+            x1 = temp;
+            temp = y0;
+            y0 = y1;
+            y1 = temp;
+        }
+        if (x1 == x0) {
+            int temp = x0;
+            x0 = y0;
+            y0 = temp;
+            temp = y1;
+            y1 = x1;
+            x1 = temp;
+            inf = true;
+        }
+        int x = x0, y = y0;
+        System.out.println("Plotting...");
+        System.out.println("(" + x + ", " + y + ")");
+        putPixel(x, y, color);
+        int dx = x1 - x0;
+        int dy = y1 - y0;
+        int pk = 2 * dy - dx;
+        for (int i = 0; i < dx; i++) {
+            if (pk < 0) {
+                x = x + 1;
+                pk = pk + 2 * dy;
+            } else {
+                x = x + 1;
+                y = y + 1;
+                pk = pk + 2 * dy - 2 * dx;
+            }
+            if (inf == true) {
+                putPixel(y, x, color);
+            } else {
+                putPixel(x, y, color);
+            }
+            System.out.println("(" + x + ", " + y + ")");
+        }
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(canvas, 0, 0, null);
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Nitin's Canvas");
+        LineBresem panel = new LineBresem(800, 600);
+        frame.add(panel);
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+
+========================================
+File: MidpointCircleGUI.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+
+public class MidpointCircleGUI extends JPanel {
+
+    private int centerX;
+    private int centerY;
+    private int radius;
+
+    public MidpointCircleGUI(int centerX, int centerY, int radius) {
+        this.centerX = centerX;
+        this.centerY = centerY;
+        this.radius = radius;
+        setBackground(Color.BLACK);
+    }
+
+    private void plotOctants(Graphics g, int xc, int yc, int x, int y) {
+        g.drawLine(xc + x, yc + y, xc + x, yc + y);
+        g.drawLine(xc - x, yc + y, xc - x, yc + y);
+        g.drawLine(xc + x, yc - y, xc + x, yc - y);
+        g.drawLine(xc - x, yc - y, xc - x, yc - y);
+        g.drawLine(xc + y, yc + x, xc + y, yc + x);
+        g.drawLine(xc - y, yc + x, xc - y, yc + x);
+        g.drawLine(xc + y, yc - x, xc + y, yc - x);
+        g.drawLine(xc - y, yc - x, xc - y, yc - x);
+    }
+
+    public void drawCircle(Graphics g, int xc, int yc, int r) {
+        if (r < 0) return;
+
+        int x = 0;
+        int y = r;
+        int d = 1 - r;
+
+        g.setColor(Color.WHITE);
+        plotOctants(g, xc, yc, x, y);
+
+        while (x < y) {
+            x++;
+            if (d < 0) {
+                d += 2 * x + 1;
+            } else {
+                y--;
+                d += 2 * (x - y) + 1;
+            }
+            plotOctants(g, xc, yc, x, y);
+        }
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawCircle(g, this.centerX, this.centerY, this.radius);
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Midpoint Circle Algorithm");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 600);
+
+        MidpointCircleGUI circlePanel = new MidpointCircleGUI(300, 300, 200);
+        frame.add(circlePanel);
+
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+}
+
+========================================
+File: MidpointEllipse.java
+========================================
+import java.awt.*;
+import javax.swing.*;
+
+public class MidpointEllipse extends JPanel {
+    private final int xc, yc;
+    private final int rx, ry;
+
+    public MidpointEllipse(int width, int height, int rx, int ry) { 
+        this.xc = width / 2;
+        this.yc = height / 2;
+        this.rx = rx;
+        this.ry = ry;
+        setPreferredSize(new Dimension(width, height));
+        setBackground(Color.RED);
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        drawMidpointEllipse(g, xc, yc, rx, ry);
+    }
+
+    private void putPixel(Graphics g, int x, int y) {
+        g.fillRect(x, y, 1, 1);
+    }
+
+    private void plotSymmetric(Graphics g, int xc, int yc, int x, int y) {
+        putPixel(g, xc + x, yc + y);
+        putPixel(g, xc - x, yc + y);
+        putPixel(g, xc + x, yc - y);
+        putPixel(g, xc - x, yc - y);
+    }
+
+    private void drawMidpointEllipse(Graphics g, int xc, int yc, int rx, int ry) {
+        double rx2 = rx * (double) rx;
+        double ry2 = ry * (double) ry;
+
+        // Region 1
+        int x = 0;
+        int y = ry;
+        double dx = 2 * ry2 * x;
+        double dy = 2 * rx2 * y;
+
+        double p1 = ry2 - (rx2 * ry) + (0.25 * rx2);
+
+        while (dx < dy) {
+            plotSymmetric(g, xc, yc, x, y);
+            x++;
+            dx = dx + 2 * ry2;
+            if (p1 < 0) {
+                p1 = p1 + dx + ry2;
+            } else {
+                y--;
+                dy = dy - 2 * rx2;
+                p1 = p1 + dx - dy + ry2;
+            }
+        }
+
+        // Region 2
+        double p2 = (ry2 * (x + 0.5) * (x + 0.5)) + (rx2 * (y - 1) * (y - 1)) - (rx2 * ry2);
+        while (y >= 0) {
+            plotSymmetric(g, xc, yc, x, y);
+            y--;
+            dy = dy - 2 * rx2;
+            if (p2 > 0) {
+                p2 = p2 + rx2 - dy;
+            } else {
+                x++;
+                dx = dx + 2 * ry2;
+                p2 = p2 + dx - dy + rx2;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        final int width = 800;
+        final int height = 600;
+        final int rx = 250;
+        final int ry = 150;
+
+        JFrame frame = new JFrame("MIDPOINT ELLIPSE ALGORITHM");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.add(new MidpointEllipse(width, height, rx, ry));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+    }
+}
+
+========================================
+File: BlinkingCircle.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/**
+ * A JPanel that displays a blinking, size-changing circle.
+ */
+class CirclePanel extends JPanel {
+
+    // --- Animation State Variables ---
+    private int radius = 50; // The current radius of the circle
+    private int minRadius = 20;
+    private int maxRadius = 150;
+    private boolean growing = true; // Direction of size change
+
+    public CirclePanel() {
+        // Set up a timer to update the animation every 50ms
+        Timer timer = new Timer(1, new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                updateCircleSize();
+                repaint(); // Trigger a redraw of the panel
+            }
+        });
+        timer.start();
+    }
+
+    /**
+     * Updates the radius of the circle for the next frame of the animation.
+     */
+    private void updateCircleSize() {
+        if (growing) {
+            radius++;
+            if (radius >= maxRadius) {
+                growing = false; // Switch to shrinking
+            }
+        } else {
+            radius--;
+            if (radius <= minRadius) {
+                growing = true; // Switch to growing
+            }
+        }
+    }
+
+    /**
+     * This method is called by Swing to draw the component.
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Get the center of the panel
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
+
+        // Calculate the top-left corner for the oval
+        int x = centerX - radius;
+        int y = centerY - radius;
+
+        // Set the color to red
+        g.setColor(Color.RED);
+
+        // Draw the circle as a filled oval
+        g.fillOval(x, y, radius * 2, radius * 2);
+    }
+}
+
+/**
+ * Main class to set up the JFrame and run the animation.
+ */
+public class BlinkingCircle {
+    public static void main(String[] args) {
+        // Ensure GUI updates are done on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Blinking Circle Animation");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(400, 400);
+
+            // Add our custom panel to the frame
+            frame.add(new CirclePanel());
+
+            frame.setLocationRelativeTo(null); // Center the window
+            frame.setVisible(true);
+        });
+    }
+}
+
+========================================
+File: CubicFunctionPlotter.java
+========================================
+import java.awt.*;
+import javax.swing.*;
+
+public class CubicFunctionPlotter extends JPanel {
+
+    // Define the window dimensions
+    private final int width;
+    private final int height;
+
+    // Define the center of the panel (origin of the graph)
+    private final int xc;
+    private final int yc;
+
+    // Scale factor to make the graph visible
+    private final int SCALE = 20;
+
+    public CubicFunctionPlotter(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.xc = width / 2;
+        this.yc = height / 2;
+        setPreferredSize(new Dimension(width, height));
+        setBackground(Color.WHITE);
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        // Draw axes first
+        // drawAxes(g);
+        
+        // Set color for the function plot and draw it
+        g.setColor(Color.BLUE);
+        drawFunction(g);
+    }
+
+    /**
+     * Draws the X and Y coordinate axes.
+     */
+    private void drawAxes(Graphics g) {
+        g.setColor(Color.GRAY);
+        // Draw X-axis
+        g.drawLine(0, yc, width, yc);
+        // Draw Y-axis
+        g.drawLine(xc, 0, xc, height);
+
+        // Draw ticks and labels for clarity
+        g.setColor(Color.BLACK);
+        for (int i = -10; i <= 10; i++) {
+            if (i == 0) continue;
+            // X-axis ticks
+            int tickX = xc + i * SCALE;
+            g.drawLine(tickX, yc - 5, tickX, yc + 5);
+            g.drawString(String.valueOf(i), tickX - 5, yc + 20);
+        }
+    }
+
+    /**
+     * Plots a single pixel on the screen.
+     */
+    private void putPixel(Graphics g, int x, int y) {
+        // Using fillRect to draw a 2x2 pixel for better visibility
+        g.fillRect(x, y, 2, 2);
+    }
+
+    /**
+     * Calculates and plots the function y = x^3 / 12.
+     */
+    private void drawFunction(Graphics g) {
+        // Loop through the mathematical x-values from -10 to 10
+        // Use a small step for a smooth curve
+        for (double x_math = -10.0; x_math <= 10.0; x_math += 0.01) {
+            
+            // Calculate the mathematical y-value using the function
+            double y_math = (Math.pow(x_math, 3)) / 12.0;
+
+            // --- Coordinate Transformation ---
+            // Convert mathematical coordinates to screen (pixel) coordinates.
+            // 1. Scale the values.
+            // 2. Translate them relative to the center (xc, yc).
+            // Note: We subtract y_math because screen Y increases downwards.
+            int x_screen = xc + (int) (x_math * SCALE);
+            int y_screen = yc - (int) (y_math * SCALE);
+
+            // Plot the transformed pixel
+            putPixel(g, x_screen, y_screen);
+        }
+    }
+
+    public static void main(String[] args) {
+        final int width = 800;
+        final int height = 600;
+
+        JFrame frame = new JFrame("Plot of y = x^3 / 12");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.add(new CubicFunctionPlotter(width, height));
+        frame.pack();
+        frame.setLocationRelativeTo(null); // Center the window
+        frame.setVisible(true);
+    }
+}
+
+========================================
+File: CubicFunctionPlotter1.java
+========================================
+import javax.swing.*;
+import java.awt.*;
+//y = x^3/12 -10<=x<=10
+
+
+public class CubicFunctionPlotter1 extends JPanel{
+    private final int width;
+    private final int height;
+    private final int scale;
+
+    public CubicFunctionPlotter1 (int width, int height, int scale) {
+        this.width = width;
+        this.height = height;
+        this.scale = scale;
+        setPreferredSize(new Dimension(width, height));
+        setBackground(Color.WHITE);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.BLUE);
+        drawAxes(g);
+        g.setColor(Color.RED);
+        plotCubicFunction(g);
+    }
+
+    private void drawAxes(Graphics g) {
+        // Draw X and Y axes
+        g.drawLine(0, height / 2, width, height / 2); // X-axis
+        g.drawLine(width / 2, 0, width / 2, height); // Y-axis
+    }
+
+    private void plotCubicFunction(Graphics g) {
+        for (int x = -10; x <= 10; x++) {
+            int y = (int) ((Math.pow(x, 3) / 12));
+            int screenX = width / 2 + x * scale;
+            int screenY = height / 2 - y * scale; // Invert y for screen coordinates
+            g.fillRect(screenX, screenY, 2, 2); // Plot point
+        }
+    }
+
+    public static void main(String[] args) {
+        final int width = 800;
+        final int height = 600;
+        final int scale = 20; // Scale factor for better visibility
+
+        JFrame frame = new JFrame("Cubic Function Plotter");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.add(new CubicFunctionPlotter1(width, height, scale));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+}
